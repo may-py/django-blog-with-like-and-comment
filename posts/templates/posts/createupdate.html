@@ -1,0 +1,17 @@
+{% extends 'posts/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% if object.id %}
+    <label for="update">Update</label>
+    {% else %}
+    <label for="new">New</label>
+    {% endif %}
+    {{ form|crispy }}
+    <button class="btn btn-primary btn-sm my-2" type="submit">Submit</button>
+</form>
+
+
+{% endblock content %}

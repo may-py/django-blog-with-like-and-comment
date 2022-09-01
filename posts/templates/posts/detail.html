@@ -1,0 +1,65 @@
+{% extends 'posts/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+{% if object.author == request.user %}
+<span>
+    <a class="btn btn-success btn-sm" href="{% url 'posts:post-update' object.id %}" >Update</a>
+    <a class="btn btn-danger btn-sm" href="{% url 'posts:post-delete' object.id %}" >Delete</a>  
+</span>
+{% endif %}
+
+<article class="media content-section">
+    <img class="rounded-circle article-img" src="#">
+    <div class="media-body">
+      <div class="article-metadata">
+        <a class="mr-2" href="#">{{ object.author }}</a>
+        <small class="text-muted">{{ object.date_posted | date:"F d,Y" }}</small>
+      </div>
+      <h2><a class="article-title" href="{% url 'posts:post-detail' object.id %}">{{ object.title }}</a></h2>
+      <p class="article-content">{{ object.content }}</p>
+      {% if object.image %}
+      <div><img src="{{ object.image.url }}" alt="" height="auto" width="100%"></div>
+      {% else %}
+      <div></div>
+      {% endif %}
+    </div>
+    {% if user.is_authenticated %}
+    <form action="{% url 'posts:post-like' object.pk %}" method="POST">
+      {% csrf_token %}
+      {% if request.user in object.likes.all %}
+      <button type="submit" name="post_id", value="{{ object.id }}", class="btn btn-red my-2"> <i class="fa fa-heart" aria-hidden="true">Dislike</i></button> <span class="text-muted">{{ object.total_likes }}</span>
+      {% else %}
+      <button type="submit" name="post_id", value="{{ object.id }}", class="btn btn-white my-2"><i class="fa fa-heart-o" aria-hidden="true">Like</i> </button> <span class="text-muted">{{ object.total_likes }}</span>
+      {% endif %}
+    </form>
+    {% else %}
+      <a class="btn btn-primary", href="{% url 'account_login' %}">Login & Like!</a>
+    {% endif %}
+
+    <hr/>
+    <h2>Comments</h2>
+        {% if not object.comments.all %}
+          Not yet comment <a href="{% url 'posts:comment' object.pk %}">Add one</a>
+        {% else %}
+          {% for comment in object.comments.all %}
+            <br/>
+        <strong>{{ comment.name }} - {{ comment.date_added }}</strong> <br/>
+        {{ comment.body }}
+        <span>
+            <form action="{% url 'posts:comment-delete' comment.id %}" method="post">
+            {% csrf_token %}
+            <button name="post_id" value="{{ object.id }}" class="btn btn-danger btn-sm" type="submit">Delete</button>
+            </form>
+    </span>
+          {% endfor %}
+        <br/>
+          <a href="{% url 'posts:comment' object.pk %}">New Comment</a>
+        {% endif %}
+
+    
+</article>
+
+
+
+{% endblock content %}
