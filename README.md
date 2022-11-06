@@ -2,8 +2,8 @@
 
 Django is a free and open-source, Python-based web framework that follows the model–template–views architectural pattern.
 
-Web Framework : Django
-Database: PostgreSQL
+- Web Framework : Django
+- Database: PostgreSQL
 
 Features:
 - Create Post
