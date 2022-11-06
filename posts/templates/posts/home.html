@@ -1,0 +1,33 @@
+{% extends 'posts/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+{% for post in posts %}
+<article class="media content-section border my-2">
+    <img class="rounded-circle article-img" src="#">
+    <div class="media-body">
+      <div class="article-metadata">
+        <a class="mr-2" href="{% url 'posts:user-post' post.author.username %}">{{ post.author }}</a>
+        <small class="text-muted">{{ post.date_posted | date:"F d,Y" }}</small>
+      </div>
+      <h2><a class="article-title" href="{% url 'posts:post-detail' post.id %}">{{ post.title }}</a></h2>
+      <p class="article-content">{{ post.content }}</p>
+
+    </div>
+    {% if user.is_authenticated %}
+    <form action="{% url 'posts:post-like' post.pk %}" method="POST">
+      {% csrf_token %}
+      {% if request.user in post.likes.all %}
+      <button type="submit" name="post_id", value="{{ post.id }}", class="btn btn-red my-2"> <i class="fa fa-heart" aria-hidden="true">Dislike</i></button> <span class="text-muted">{{ post.total_likes }}</span>
+      {% else %}
+      <button type="submit" name="post_id", value="{{ post.id }}", class="btn btn-white my-2"><i class="fa fa-heart-o" aria-hidden="true">Like</i> </button> <span class="text-muted">{{ post.total_likes }}</span>
+      {% endif %}
+    </form>
+    {% else %}
+      <a class="btn btn-primary", href="{% url 'account_login' %}">Login & Like!</a>
+    {% endif %}
+</article>
+
+{% endfor %}
+
+{% endblock content %}
